@@ -7,3 +7,16 @@ Alternative Actions:
 Agreed-on Roles:
   - Alex Stelzer - Notetaker
   - Everyone else will be decided after the Thursday recitation where we actually get started on this.
+
+Thursday 3/21/2024 Notes:
+  - Minimum viable product
+  - Barebones
+  - Main focus: Application, Architecture, Features, and Critical Functionality
+  - Create Atomic Commits
+    - Not atomic if it's tiny
+    = Make it so that you can summarize what happened in under 50 characters
+    - You don't want the 
+  - Merge each to main, do not use long lived branches
+  - They only consider contributions to main
+  - Create a tag each week with the main release notes
+  - Whenever you merge a pull request
