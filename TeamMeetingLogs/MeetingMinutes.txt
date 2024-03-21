@@ -1,0 +1,9 @@
+Minutes 3/18/2024
+Decisions Made:
+  - Design front interface first
+  - Break it down into parts that each person can do 
+Alternative Actions:
+  - Everyone is figuring out how we want to go about this and coming together after we actually start this on Thursday recitation.
+Agreed-on Roles:
+  - Alex Stelzer - Notetaker
+  - Everyone else will be decided after the Thursday recitation where we actually get started on this.
