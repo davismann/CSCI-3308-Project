@@ -1,0 +1,25 @@
+<div class="container mt-5">
+    <!-- Container for the login form with a top margin -->
+    <h1>Log In</h1>
+    <!-- Login form heading -->
+    {{> message}}
+    <!-- Placeholder for displaying messages (e.g., errors, confirmations) -->
+    <form action="/login" method="POST">
+        <!-- Form for user login, submits to /login endpoint via POST -->
+        <div class="mb-3">
+            <!-- Grouping for form inputs with a bottom margin -->
+            <label for="username" class="form-label">Username</label>
+            <!-- Label for the username input -->
+            <input type="text" class="form-control" id="username" name="username" aria-describedby="usernameHelp" placeholder="Enter your username" required>
+            <!-- Input field for username, with additional description and marked as required -->
+            <label for="passwordInput" class="form-label">Password</label>
+            <!-- Label for the password input -->
+            <input type="password" class="form-control" id="passwordInput" name="password" placeholder="Enter your password" required>
+            <!-- Input field for password, marked as required -->
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+        <!-- Button to submit the form, styled with Bootstrap -->
+    </form>
+    <p class="mt-3">Don't have an account? <a href="/register">Register</a></p>
+    <!-- Link to the registration page for new users -->
+</div>
