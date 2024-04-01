@@ -20,3 +20,12 @@ Thursday 3/21/2024 Notes:
   - They only consider contributions to main
   - Create a tag each week with the main release notes
   - Whenever you merge a pull request
+
+
+PLAN FOR NEXT WEEK:
+Eric - Create API call to login
+Andrew - Create calorie and macronutrient input and put them into the database.
+Idir - open
+Sam- Research and implement calorie requirement equations and variables needed (BMR) (+/- 500 cal for gain/lose)
+Davis - Create
+Alex - Fully initialize and complete SQL database and figure out whats needed for calorie tracker
