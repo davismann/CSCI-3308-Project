@@ -134,7 +134,14 @@ app.use(auth);
 ///////
 app.get('/home', (req, res) => {
   // Render home.hbs without fetching any external data
-  res.render('pages/home');
+  res.render('pages/home', {
+    username: req.session.user.username,
+    height: req.session.user.height,
+    weight: req.session.user.weight,
+    age: req.session.user.age,
+    activity_level: req.session.user.activity_level,
+    weight_goal: req.session.user.weight_goal
+  });
 });
 
   

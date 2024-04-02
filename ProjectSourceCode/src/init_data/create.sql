@@ -3,6 +3,6 @@ CREATE TABLE IF NOT EXISTS users (
   password CHAR(60) NOT NULL,
   height CHAR(3) NOT NULL,
   weight VARCHAR(4) NOT NULL,
-  activity_level ENUM('Never', '1-2 times a week', '3-4 times a week', '5-7 times a week'),
-  weight_goal ENUM('Lose Weight', 'Bulk', 'Maintain')
+  activity_level VARCHAR(20) NOT NULL,
+  weight_goal VARCHAR(20) NOT NULL
 );
