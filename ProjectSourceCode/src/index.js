@@ -69,7 +69,10 @@ app.use(
   app.get('/login', (req, res) => {
     res.render('pages/login');
   });
-  
+  /////
+  app.get('/tracker', (req, res) => {
+    res.render('pages/tracker');
+  });  
   ////////
   app.get('/register', (req, res) => {
     res.render('pages/register');
