@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .calories-info {
+            display: flex;
+            justify-content: space-around;
+        }
+        .calories-info div {
+            flex: 1;
+            margin: 0 10px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #b3d2f3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>User Tracker</h1>
+        <div class="calories-info">
+            <div>
+                <h2>Previous Week's Calories Met</h2>
+                <ul id="previous-calories">
+                    <!--Dynamically-->
+                    <li>Entry 1</li>
+                    <li>Entry 2</li>
+                    <li>Entry 3</li>
+                </ul>
+            </div>
+            <div>
+                <h2>Today's Calories Information</h2>
+                <p>Calories Just Input: <span id="calories-input">0</span></p>
+                <p>Calories Needed to Meet Goal: <span id="calories-needed">0</span></p>
+                <button class="button" onclick="track()">Track</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        //track calories func
+        function track() {
+            //Example logic update w ur shit
+            const caloriesInput = 500; 
+            const caloriesNeeded = 1500;
+
+            //update w/ calculated values
+            document.getElementById('calories-input').textContent = caloriesInput;
+            document.getElementById('calories-needed').textContent = caloriesNeeded;
+        }
+    </script>
+</body>
+</html>
