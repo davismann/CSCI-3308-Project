@@ -82,7 +82,7 @@ app.use(
         const insertQuery = await db.result('INSERT INTO users(username, password) VALUES($1, $2);', [req.body.username, hashedPassword]);
       
         if (insertQuery) {
-            res.status(201).redirect('/login');
+            res.redirect('/login');
         } else {
             res.render('pages/register');
         }
@@ -107,7 +107,7 @@ app.post('/login', async (req, res) => {
       if (match) {
         req.session.user = user;
         req.session.save();
-        res.redirect('/home');
+        res.redirect('/');
       } 
       else {
         res.render('pages/login', { error: 'Incorrect username or password.' });
@@ -134,7 +134,7 @@ app.use(auth);
 ///////
 app.get('/home', (req, res) => {
   // Render home.hbs without fetching any external data
-  res.render('home');
+  res.render('pages/home');
 });
 
   
