@@ -12,7 +12,7 @@ const axios = require('axios'); // To make HTTP requests from our server. We'll 
 // create `ExpressHandlebars` instance and configure the layouts and partials dir.
 const hbs = handlebars.create({
   extname: 'hbs',
-  layoutsDir: __dirname + '/views/layouts',
+  layoutsDir: __dirname + '/views/layout',
   partialsDir: __dirname + '/views/partials',
 });
 
