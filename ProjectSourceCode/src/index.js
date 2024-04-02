@@ -107,7 +107,7 @@ app.post('/login', async (req, res) => {
       if (match) {
         req.session.user = user;
         req.session.save();
-        res.redirect('/discover');
+        res.redirect('/home');
       } 
       else {
         res.render('pages/login', { error: 'Incorrect username or password.' });
@@ -132,6 +132,10 @@ const auth = (req, res, next) => {
 app.use(auth);
 
 ///////
+app.get('/home', (req, res) => {
+  // Render home.hbs without fetching any external data
+  res.render('home');
+});
 
   
 // *****************************************************
