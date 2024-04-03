@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS tracker (
-    track_id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    track_id INT SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
     date DATE NOT NULL,
     protein VARCHAR(5) NOT NULL,
@@ -17,5 +17,6 @@ CREATE TABLE IF NOT EXISTS tracker (
     dietary_fibers VARCHAR(5) NOT NULL,
     carbohydrates VARCHAR(5) NOT NULL,
     goal_calories VARCHAR(5) NOT NULL,
+
     FOREIGN KEY (username) REFERENCES users(username)
 );
