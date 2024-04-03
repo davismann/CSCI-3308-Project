@@ -1,0 +1,17 @@
+RELEASE NOTES:
+
+4/1/2024
+Fully assigned tasks to everyone to have completed by next release notes:
+Eric - Create API call to login
+Andrew - Create calorie and macronutrient input and put them into the database.
+Idir - compare everything we can pull from previous labs
+Sam- Research and implement calorie requirement equations and variables needed (BMR) (+/- 500 cal for gain/lose)
+Davis - Create/Finish hbs'
+Alex - Fully initialize and complete SQL database and figure out whats needed for calorie tracker
+
+What has been completed so far:
+
+Working visual signup page
+Partials for hbs'
+Docker set up complete
+Initial setup for create SQL table
