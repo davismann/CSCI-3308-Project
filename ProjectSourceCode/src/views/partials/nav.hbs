@@ -1,9 +1,9 @@
 <header>
   <nav class="navbar navbar-expand-sm border-bottom">
     <div class="container">
-      <a class="navbar-brand" href="#"> <!-- Add href to link to homepage if applicable -->
-        <strong>CalTracker+</strong> <!-- Title in bold -->
-        <span class="smaller-font">Your Ultimate Calorie Tracking Solution</span> <!-- Smaller font -->
+      <a class="navbar-brand" href="/home"> <!-- Link to the home page -->
+        <strong>CalTracker+</strong>
+        <span class="smaller-font">Your Ultimate Calorie Tracking Solution</span>
       </a>
       <button
         class="navbar-toggler ms-auto"
@@ -18,12 +18,13 @@
       <div class="collapse navbar-collapse" id="navbar-collapse">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <!-- TODO: For Discover, add a <a> tag with an attribute href to call the '/tracker' API -->
+            <a class="nav-link" href="/home">Home</a> <!-- Link to the home page -->
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="/tracker">Tracker</a>
           </li>
         </ul>
         <div class="nav-item me-1">
-          <!-- TODO: For Logout, add a <a> tag with an attribute href to call the '/logout API -->
           <a class="nav-link" href="/logout">Logout</a>
         </div>
       </div>
