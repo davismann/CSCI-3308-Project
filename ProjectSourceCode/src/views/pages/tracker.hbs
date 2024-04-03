@@ -61,6 +61,10 @@
                     <li>Entry 1</li>
                     <li>Entry 2</li>
                     <li>Entry 3</li>
+                    <li>Entry 4</li>
+                    <li>Entry 5</li>
+                    <li>Entry 6</li>
+                    <li>Entry 7</li>
                 </ul>
             </div>
             <div>
@@ -76,12 +80,20 @@
         //track calories func
         function track() {
             //Example logic update w ur shit
-            const caloriesInput = 500; 
-            const caloriesNeeded = 1500;
+            const date = new Date();
+
+            let day = date.getDay();
+            let month = '0' + (date.getMonth() + 1);
+            let year = date.getFullYear();
+            let currentDate = `${year}-${month}-${day}`;
+
+            const caloriesInput = `SELECT total_cals FROM tracker WHERE username = $1 AND date = $2`, [username, currentDate];
+            const caloriesNeeded = `SELECT goal_calories FROM tracker WHERE username = $1`, [username];
 
             //update w/ calculated values
             document.getElementById('calories-input').textContent = caloriesInput;
             document.getElementById('calories-needed').textContent = caloriesNeeded;
+            
         }
     </script>
 </body>
