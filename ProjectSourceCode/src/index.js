@@ -78,53 +78,66 @@ app.use(
     res.render('pages/register');
   });
 
-  ///////
   app.post('/register', async (req, res) => {
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        const insertQuery = await db.result('INSERT INTO users(username, password) VALUES($1, $2);', [req.body.username, hashedPassword]);
-      
-        if (insertQuery) {
-            res.redirect('/login');
-        } else {
-            res.render('pages/register');
-        }
-        } catch (error) {
-        console.error('Error registering user:', error);
-        res.status(500).send('Error registering user. Please try again later.');
-        }
-  });
-
-///////
-app.post('/login', async (req, res) => {
-  try {
-    const { username, password } = req.body;
-
-    // Find the user from the users table by username
-    const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
-
-    // Check if user exists
-    if (user) 
-    {
-      const match = await bcrypt.compare(password, user.password);
-      if (match) {
-        req.session.user = user;
-        req.session.save();
-        res.redirect('/home');
-      } 
-      else {
-        res.render('pages/login', { error: 'Incorrect username or password.' });
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      const insertQuery = await db.result('INSERT INTO users(username, password) VALUES($1, $2);', [req.body.username, hashedPassword]);
+        
+      if (insertQuery) {
+        // After successful registration, set the session user with basic information
+        req.session.user = {
+          username: req.body.username,
+          height: null, // Set to null initially, you can update this later
+          weight: null, // Set to null initially, you can update this later
+          age: null, // Set to null initially, you can update this later
+          activity_level: null, // Set to null initially, you can update this later
+          weight_goal: null // Set to null initially, you can update this later
+        };
+        req.session.save(); // Save the session
+        res.redirect('/login');
+      } else {
+        res.render('pages/register');
       }
-    } 
-    else {
-      res.redirect('/register');
+    } catch (error) {
+      console.error('Error registering user:', error);
+      res.status(500).send('Error registering user. Please try again later.');
     }
-  } catch (error) {
-    console.error('Error logging in:', error);
-    res.render('pages/login', { error: 'An error occurred. Please try again later.' });
-  }
-});
-
+  });
+  
+  app.post('/login', async (req, res) => {
+    try {
+      const { username, password } = req.body;
+  
+      // Find the user from the users table by username
+      const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
+  
+      // Check if user exists
+      if (user) {
+        const match = await bcrypt.compare(password, user.password);
+        if (match) {
+          // If credentials match, set the session user with the user's information
+          req.session.user = {
+            username: user.username,
+            height: user.height,
+            weight: user.weight,
+            age: user.age,
+            activity_level: user.activity_level,
+            weight_goal: user.weight_goal
+          };
+          req.session.save(); // Save the session
+          res.redirect('/home');
+        } else {
+          res.render('pages/login', { error: 'Incorrect username or password.' });
+        }
+      } else {
+        res.redirect('/register');
+      }
+    } catch (error) {
+      console.error('Error logging in:', error);
+      res.render('pages/login', { error: 'An error occurred. Please try again later.' });
+    }
+  });
+  
 ///////
 const auth = (req, res, next) => {
     if (!req.session.user) {
@@ -147,6 +160,17 @@ app.get('/home', (req, res) => {
   });
 });
 
+app.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Error destroying session:', err);
+      res.status(500).send('Error logging out');
+    } else {
+
+      res.render('pages/logout');
+    }
+  });
+});
   
 // *****************************************************
 // <!-- Section 5 : Start Server-->
