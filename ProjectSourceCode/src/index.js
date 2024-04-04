@@ -145,10 +145,10 @@ app.use(
   
       // Find the user from the users table by username
       const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
-  
       // Check if user exists
       if (user) {
         const match = await bcrypt.compare(password, user.password);
+        
         if (match) {
           // If credentials match, set the session user with the user's information
           req.session.user = {
@@ -163,16 +163,18 @@ app.use(
           req.session.save(); // Save the session
           res.redirect('/home');
         } else {
-          res.render('pages/login', { error: 'Incorrect username or password.' });
+          res.status(400).render('pages/login', { error: 'Incorrect username or password.' });
         }
       } else {
+        // res.status(400).render('pages/register');
         res.redirect('/register');
       }
     } catch (error) {
       console.error('Error logging in:', error);
-      res.render('pages/login', { error: 'An error occurred. Please try again later.' });
+      res.status(400).render('pages/login', { error: 'An error occurred. Please try again later.' });
     }
   });
+
 
 app.get('/home', auth, (req, res) => {
   res.render('pages/home', {
@@ -215,6 +217,21 @@ app.get('/tracker', auth, async (req, res) => {
   }
 });
 
+//DUMMY APIS FOR TESTING//
+
+app.get('/welcome', (req, res) => {
+  res.json({status: 'success', message: 'Welcome!'});
+});
+
+app.get('/dummy-positive-test', (req, res) => {
+  res.status(200).json({ result: 15 });
+});
+
+app.get('/dummy-negative-test', (req, res) => {
+  res.status(200).json({ result: 5 }); 
+});
+
+
   
 // *****************************************************
 // <!-- Section 5 : Start Server-->
@@ -224,7 +241,3 @@ module.exports = app.listen(3000);
 console.log('Server is listening on port 3000');
 
 
-//test function from Lab 11
-app.get('/welcome', (req, res) => {
-  res.json({status: 'success', message: 'Welcome!'});
-});
