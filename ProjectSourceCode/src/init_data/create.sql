@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS users (
   weight VARCHAR(4),
   age CHAR(3),
   activity_level VARCHAR(20),
-  weight_goal VARCHAR(20)
+  weight_goal VARCHAR(20),
+  calorie_requirement VARCHAR(10)
 );
 
 CREATE TABLE IF NOT EXISTS tracker (

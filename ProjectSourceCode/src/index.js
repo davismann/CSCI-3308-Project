@@ -72,38 +72,75 @@ app.use(
   app.get('/login', (req, res) => {
     res.render('pages/login');
   });
-  app.get('/tracker', auth, (req, res) => {
-    res.render('pages/tracker');
-  });  
   app.get('/register', (req, res) => {
     res.render('pages/register');
+  });
+  app.get('/tracker', (req, res) => {
+    res.render('pages/tracker');
   });
 
   app.post('/register', async (req, res) => {
     try {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      const insertQuery = await db.result('INSERT INTO users(username, password, height, weight, age, activity_level, weight_goal) VALUES($1, $2, $3, $4, $5, $6, $7);', [req.body.username, hashedPassword, req.body.height, req.body.weight, req.body.age, req.body.activity_level, req.body.weight_goal]);
-        
-      if (insertQuery.rowCount > 0) {
-        // After successful registration, set the session user with basic information
-        req.session.user = {
-          username: req.body.username,
-          height: req.body.height,
-          weight: req.body.weight,
-          age: req.body.age,
-          activity_level: req.body.activity_level,
-          weight_goal: req.body.weight_goal
-        };
-        req.session.save(); // Save the session
+      // Destructure the required fields from the request body
+      const { username, password, height, weight, activity_level, weight_goal, age, gender } = req.body;
+      
+      // Parse numeric fields from strings to numbers
+      const weightInKg = parseFloat(weight); 
+      const heightInCm = parseFloat(height); 
+      const ageYears = parseInt(age, 10);
+      
+      // BMR Calculation based on gender
+      const bmr = gender === 'male'
+        ? 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears + 5
+        : 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears - 161;
+      
+      // Adjust BMR based on activity level for TDEE calculation
+      const activityFactors = {
+        'Never': 1.2,
+        '1-2 times a week': 1.375,
+        '3-4 times a week': 1.55,
+        '5-7 times a week': 1.725
+      };
+      let tdee = bmr * (activityFactors[activity_level] || 1.2);
+      
+      // Adjust TDEE based on weight goal
+      if (weight_goal === 'Lose Weight') {
+        tdee -= 500;
+      } else if (weight_goal === 'Bulk') {
+        tdee += 500;
+      }
+      // No adjustment needed for 'Maintain'
+      
+      // Hash the password with bcrypt
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      let calorie_requirement = Math.round(tdee);
+      
+      // Insert the new user into the database with the calorie goal
+      const insertUserQuery = `
+        INSERT INTO users(username, password, height, weight, age, activity_level, weight_goal, calorie_requirement) 
+        VALUES($1, $2, $3, $4, $5, $6, $7, $8);
+      `;
+      const insertUser = await db.result(insertUserQuery, 
+        [username, hashedPassword, heightInCm, weightInKg, ageYears, activity_level, weight_goal, calorie_requirement]
+      );
+      
+      // Check if the user was successfully inserted
+      if (insertUser.rowCount > 0) {
+        // Set the session user if needed and redirect to login
+        // ... (session logic here if applicable) ...
         res.redirect('/login');
       } else {
-        res.render('pages/register');
+        // If insertion failed, render the registration page again with an error message
+        res.render('pages/register', { error: 'Failed to register user.' });
       }
     } catch (error) {
+      // Log and send the error
       console.error('Error registering user:', error);
       res.status(500).send('Error registering user. Please try again later.');
     }
   });
+  
   
   app.post('/login', async (req, res) => {
     try {
@@ -123,7 +160,8 @@ app.use(
             weight: user.weight,
             age: user.age,
             activity_level: user.activity_level,
-            weight_goal: user.weight_goal
+            weight_goal: user.weight_goal,
+            calorie_requirement: user.calorie_requirement
           };
           req.session.save(); // Save the session
           res.redirect('/home');
@@ -146,7 +184,8 @@ app.get('/home', auth, (req, res) => {
     weight: req.session.user.weight,
     age: req.session.user.age,
     activity_level: req.session.user.activity_level,
-    weight_goal: req.session.user.weight_goal
+    weight_goal: req.session.user.weight_goal,
+    calorie_requirement: req.session.user.calorie_requirement
   });
 });
 
@@ -161,6 +200,9 @@ app.get('/logout', auth, (req, res) => {
     }
   });
 });
+
+
+
   
 // *****************************************************
 // <!-- Section 5 : Start Server-->
