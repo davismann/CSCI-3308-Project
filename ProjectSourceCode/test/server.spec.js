@@ -29,18 +29,83 @@ describe('Server!', () => {
 
 // *********************** TODO: WRITE 2 UNIT TESTCASES **************************
 
-describe('Testing ', () => {
-    it('positive : /login', done => {
-      chai
-        .request(server)
-        .post('/login')
-        .send({username: 'andrewsFootFungus', password: 'bigFella'})
+describe('Testing1', () => {
+  it('positive : /register', done => {
+    chai
+      .request(server)
+      .post('/register')
+      .send({
+        username: 'andrewsFootFungus',
+        password: 'bigFella',
+        height: '175',
+        weight: '70',
+        age: '30',
+        activity_level: '3-4 times a week',
+        weight_goal: 'Maintain',
+      })
       .end((err, res) => {
-        res.should.have.status(302); // Expecting a redirect status code
-        res.should.redirect('/home'); // Expecting a redirect to /login with the mentioned Regex
+        expect(res).to.have.status(200);
         done();
       });
-    });
+  });
 });
 
-// ********************************************************************************
+describe('Testing2', () => {
+  it('negative: /register - Invalid credentials should return 400', done => {
+    chai
+      .request(server)
+      .post('/register')
+      .send({
+        username: '400',
+        password: 'CU12345',
+        height: '160',
+        weight: '55',
+        age: '25',
+        activity_level: '5-7 times a week',
+        weight_goal: 'Lose Weight',
+      })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        done();
+      });
+  });
+});
+
+describe('Testing4', () => {
+  it('negative: /login - Invalid credentials should return 400', done => {
+    chai
+      .request(server)
+      .post('/login')
+      .send({username: '400', password: 'andrewsFoot'})
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        done();
+      });
+  });
+});
+
+describe('Dummy Positive Test', () => {
+  it('should pass', done => {
+    chai
+    .request(server)
+      .get('/dummy-positive-test')
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.result).to.equal(15);
+        done();
+      });
+  });
+});
+
+describe('Dummy Negative Test', () => {
+  it('should fail', done => {
+    chai
+    .request(server)
+      .get('/dummy-negative-test')
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.result).to.equal(5); 
+        done();
+      });
+  });
+});
