@@ -1,3 +1,24 @@
 <div class="container">
-<h1 style="color: green; text-align: center;">Successfully logged out.</h1>
+    <div style="text-align: center;">
+        <h1 style="color: black;">Successfully logged out.</h1>
+        <p style="font-size: smaller;">Thanks for using Caltracker+! Current time: <span id="current-time"></span></p>
+    </div>
 </div>
+
+<script>
+    function getCurrentTime() {
+        var now = new Date();
+        var hours = now.getHours();
+        var minutes = now.getMinutes();
+        var seconds = now.getSeconds();
+        var timeString = padZero(hours) + ":" + padZero(minutes) + ":" + padZero(seconds);
+        document.getElementById("current-time").textContent = timeString;
+    }
+
+    function padZero(num) {
+        return (num < 10 ? "0" : "") + num;
+    }
+
+    setInterval(getCurrentTime, 1000);
+    getCurrentTime();
+</script>

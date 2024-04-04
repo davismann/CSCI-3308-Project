@@ -9,6 +9,13 @@ const session = require('express-session'); // To set the session object. To sto
 const bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part C.
 
+const auth = (req, res, next) => {
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+  next();
+};
+
 // create `ExpressHandlebars` instance and configure the layouts and partials dir.
 const hbs = handlebars.create({
   extname: 'hbs',
@@ -59,21 +66,15 @@ app.use(
   })
 );
 
-
-  ////////
   app.get('/', (req, res) => {
     res.redirect('/login');
   });
-
-  ////////
   app.get('/login', (req, res) => {
     res.render('pages/login');
   });
-  /////
-  app.get('/tracker', (req, res) => {
+  app.get('/tracker', auth, (req, res) => {
     res.render('pages/tracker');
   });  
-  ////////
   app.get('/register', (req, res) => {
     res.render('pages/register');
   });
@@ -81,17 +82,17 @@ app.use(
   app.post('/register', async (req, res) => {
     try {
       const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      const insertQuery = await db.result('INSERT INTO users(username, password) VALUES($1, $2);', [req.body.username, hashedPassword]);
+      const insertQuery = await db.result('INSERT INTO users(username, password, height, weight, age, activity_level, weight_goal) VALUES($1, $2, $3, $4, $5, $6, $7);', [req.body.username, hashedPassword, req.body.height, req.body.weight, req.body.age, req.body.activity_level, req.body.weight_goal]);
         
-      if (insertQuery) {
+      if (insertQuery.rowCount > 0) {
         // After successful registration, set the session user with basic information
         req.session.user = {
           username: req.body.username,
-          height: null, // Set to null initially, you can update this later
-          weight: null, // Set to null initially, you can update this later
-          age: null, // Set to null initially, you can update this later
-          activity_level: null, // Set to null initially, you can update this later
-          weight_goal: null // Set to null initially, you can update this later
+          height: req.body.height,
+          weight: req.body.weight,
+          age: req.body.age,
+          activity_level: req.body.activity_level,
+          weight_goal: req.body.weight_goal
         };
         req.session.save(); // Save the session
         res.redirect('/login');
@@ -137,19 +138,8 @@ app.use(
       res.render('pages/login', { error: 'An error occurred. Please try again later.' });
     }
   });
-  
-///////
-const auth = (req, res, next) => {
-    if (!req.session.user) {
-    return res.redirect('/login');
-    }
-    next();
-};
-app.use(auth);
 
-///////
-app.get('/home', (req, res) => {
-  // Render home.hbs without fetching any external data
+app.get('/home', auth, (req, res) => {
   res.render('pages/home', {
     username: req.session.user.username,
     height: req.session.user.height,
@@ -160,7 +150,7 @@ app.get('/home', (req, res) => {
   });
 });
 
-app.get('/logout', (req, res) => {
+app.get('/logout', auth, (req, res) => {
   req.session.destroy(err => {
     if (err) {
       console.error('Error destroying session:', err);
