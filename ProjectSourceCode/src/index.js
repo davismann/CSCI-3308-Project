@@ -75,9 +75,6 @@ app.use(
   app.get('/register', (req, res) => {
     res.render('pages/register');
   });
-  app.get('/tracker', (req, res) => {
-    res.render('pages/tracker');
-  });
 
   app.post('/register', async (req, res) => {
     try {
@@ -201,7 +198,22 @@ app.get('/logout', auth, (req, res) => {
   });
 });
 
+app.get('/tracker', auth, async (req, res) => {
+  const username = req.session.user.username;
 
+  try {
+      const user = await db.one('SELECT calorie_requirement FROM users WHERE username = $1', username);
+
+      res.render('pages/tracker', {
+
+          calorie_requirement: user.calorie_requirement
+      });
+  } catch (error) {
+      console.error('Error fetching calorie requirement:', error);
+
+      res.status(500).send('An error occurred while fetching the calorie requirement.');
+  }
+});
 
   
 // *****************************************************
