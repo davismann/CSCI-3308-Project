@@ -15,3 +15,38 @@ Working visual signup page
 Partials for hbs'
 Docker set up complete
 Initial setup for create SQL table
+
+
+4/8/2024
+
+## What's Changed
+* Added homepage hbs along with slight adjustments to footer and navbar. by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/24
+* Adjustment to directory by moving the package.json in the right place. by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/25
+* Created the index.js for the login and register page. by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/27
+* Added Package.json file. by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/28
+* Added User table in insert.sql by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/30
+* Fixing Docker to run. by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/32
+* Adjust look of the register to match login. by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/33
+* Adjust create.sql by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/35
+* editing the Register for input of weight, height, etc. by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/36
+* New edits by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/37
+* Sorta not working for loading by @Stelzr in https://github.com/davismann/CSCI-3308-Project/pull/38
+* Current State 4/2 by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/39
+* Tracker starting. by @Stelzr in https://github.com/davismann/CSCI-3308-Project/pull/41
+* Adjust the meeting minutes by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/42
+* Add Release Notes by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/43
+* fixed track_id by @Stelzr in https://github.com/davismann/CSCI-3308-Project/pull/44
+* table update by @Stelzr in https://github.com/davismann/CSCI-3308-Project/pull/45
+* added calorie goal tracker functionality by @Andrewcook08 in https://github.com/davismann/CSCI-3308-Project/pull/46
+* Logout hbs, added into script file, add home button to nav bar, fix tracker button on home page. by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/47
+* General additions. by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/48
+* Small Edit by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/51
+* calorie requirements by @samengelbert12 in https://github.com/davismann/CSCI-3308-Project/pull/54
+* fixed tracker calories by @samengelbert12 in https://github.com/davismann/CSCI-3308-Project/pull/55
+* calories total works by @Andrewcook08 in https://github.com/davismann/CSCI-3308-Project/pull/56
+* Lab 11 stuff - /login test page isn't working by @Stelzr in https://github.com/davismann/CSCI-3308-Project/pull/57
+* testingEdits by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/58
+* Edit plans for coming week. by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/63
+
+
+**Full Changelog**: https://github.com/davismann/CSCI-3308-Project/compare/v1.0.0...v2.0.0
