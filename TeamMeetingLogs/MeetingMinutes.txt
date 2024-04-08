@@ -34,8 +34,16 @@ Made on 4/1/2024
   Eric - Create API call to login
   Andrew - Create calorie and macronutrient input and put them into the database.
   Idir - open
-  Sam- Research and implement calorie requirement equations and variables needed (BMR) (+/- 500 cal for gain/lose)
+  Sam - Research and implement calorie requirement equations and variables needed (BMR) (+/- 500 cal for gain/lose)
   Davis - Create HBS
   Alex - Fully initialize and complete SQL database and figure out whats needed for calorie tracker
 
 Made on 4/8/2024
+  Eric - Work on recipes page form, interface with recipes API, and recipes render call.
+  Andrew - Work on the tracker page visualization and equation to calculate.
+  Idir - Work on the User Acceptance Testing.
+  Sam - Implement the calorie requirement equations by applying it to the tracker page.
+  Davis - Work on test cases and make sure the recipes and tracker page or efficent.
+  Alex - Work on adjusting the databases to allow for foreign keys between pages.
+
+Made on 4/15/2024
