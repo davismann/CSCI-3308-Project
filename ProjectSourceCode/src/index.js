@@ -217,6 +217,49 @@ app.get('/tracker', auth, async (req, res) => {
   }
 });
 
+app.get('/recipes', async (req, res) => {
+  // I'm assuming 'auth' is some middleware or a function call that you've defined elsewhere
+  try {
+    const response = await axios({
+      url: `https://api.edamam.com/api/recipes/v2`,
+      method: 'GET',
+      dataType: 'json',
+      headers: {
+        'Accept': 'application/json', // Changed from 'Accept-Encoding' which is usually used for compression settings
+      },
+      params: {
+        app_key: process.env.API_KEY,
+        app_id: process.env.APP_ID,
+        type: "public", // Assuming that you're trying to access public data
+        q: "chicken"
+      },
+    });
+
+
+    if (response.data && response.data.hits) {
+      const recipes = response.data.hits.map(hit => {
+        const recipe = hit.recipe;
+        return {
+          label: recipe.label,
+          image: recipe.image,
+          url: recipe.url,
+         
+          // ...any other data you need
+        };
+      });
+      res.render('pages/recipes', { recipes: recipes }); // Render 'recipes' page with the recipes data
+    } else {
+      res.render('pages/recipes', { recipes: [] }); // Render 'recipes' page with an empty array if no data
+    }
+  } catch (error) {
+    console.error("Error with Axios:", error);
+    res.render('pages/recipes', {
+      recipes: [],
+      message: "Failed to fetch recipes. Please try again later.",
+    });
+  }
+});
+
 //DUMMY APIS FOR TESTING//
 
 app.get('/welcome', (req, res) => {
