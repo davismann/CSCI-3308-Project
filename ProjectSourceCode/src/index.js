@@ -162,11 +162,11 @@ app.use(
           };
           req.session.save(); // Save the session
           res.redirect('/home');
+
         } else {
           res.status(400).render('pages/login', { error: 'Incorrect username or password.' });
         }
       } else {
-        // res.status(400).render('pages/register');
         res.redirect('/register');
       }
     } catch (error) {
@@ -177,6 +177,7 @@ app.use(
 
 
 app.get('/home', auth, (req, res) => {
+  console.log("gethome");
   res.render('pages/home', {
     username: req.session.user.username,
     height: req.session.user.height,

@@ -1,5 +1,5 @@
 {
-    "name": "<TODO: CSCI-3308-Project>",
+    "name": "CSCI-3308-Project",
     "main": "src/index.js",
     "dependencies": {
       "express": "^4.6.1",
@@ -22,6 +22,6 @@
       "prestart": "npm install",
       "start": "nodemon src/index.js",
       "test": "mocha",
-      "testandrun": "npm run prestart && npm run test && npm start"
+      "testandrun": "npm run prestart && npm run test; npm start"
     }
   }
