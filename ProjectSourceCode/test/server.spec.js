@@ -71,7 +71,7 @@ describe('Testing2', () => {
   });
 });
 
-describe('Testing4', () => {
+describe('Testing3', () => {
   it('negative: /login - Invalid credentials should return 400', done => {
     chai
       .request(server)
@@ -84,27 +84,43 @@ describe('Testing4', () => {
   });
 });
 
-describe('Dummy Positive Test', () => {
-  it('should pass', done => {
-    chai
-    .request(server)
-      .get('/dummy-positive-test')
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body.result).to.equal(15);
+describe('Testing 4', () => {
+  it('positive: /login - should render the home page with user information', (done) => {
+    chai.request(server)
+      .post('/login')
+      .send({ username: 'andrewsFootFungus', password: 'bigFella' }) 
+      .redirects(0)
+      .end((error, res) => {
+        expect(error).to.be.null;
+        expect(res).to.have.status(302);
+            res.should.redirectTo(/\/home$/); 
+            done();
+          });
+      });
+});
+
+describe('Testing 5', () => {
+  it('negative: /login - should return status 302 for invalid credentials', (done) => {
+    chai.request(server)
+      .post('/register')
+      .redirects(0)
+      .send({ username: 'Andrew', password: 'smallFella' }) 
+      .end((error, res) => {
+        expect(error).to.be.null;
+        expect(res).to.have.status(302);
         done();
       });
   });
 });
 
-describe('Dummy Negative Test', () => {
-  it('should fail', done => {
-    chai
-    .request(server)
-      .get('/dummy-negative-test')
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        expect(res.body.result).to.equal(5); 
+describe('Testing 6', () => {
+  it('negative: /login - should return status 400 for invalid credentials', (done) => {
+    chai.request(server)
+      .post('/login')
+      .send({ username: 'andrewsFootFungus', password: 'smallFella' }) 
+      .end((error, res) => {
+        expect(error).to.be.null;
+        expect(res).to.have.status(400);
         done();
       });
   });
