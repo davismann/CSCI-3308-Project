@@ -69,31 +69,33 @@
             </div>
             <div>
                 <h2> Calories Information</h2>
-                <p>Calories Just Input: <span id="calories-input">0</span></p>
-                <p>Calories Needed to Meet Goal: {{calorie_requirement}}</p>
-                <button class="button" onclick="track()">Track</button>
+                <p>Calories today: <span id="calories-input">0</span></p>
+                <p>Goal calories: {{calorie_requirement}}</p>
             </div>
         </div>
+        <hr>
+        <div id="track-div">
+            <h1 align="left">Track</h1>
+            <form>
+                <div class="mb-3 d-flex align-items-center">
+                    <label for="meal-name" class="form-label" style="width: 120px;">Meal Name</label>
+                    <input type="text" class="form-control flex-grow-1 me-2" style="max-width: 300px;" id="meal-name">
+                </div>
+                <div class="mb-3 d-flex align-items-center">
+                    <label for="meal-calories" class="form-label" style="width: 120px;">Meal Calories</label>
+                    <input type="text" class="form-control flex-grow-1" style="max-width: 300px;" id="meal-calories">
+                </div>
+                <button type="submit" class="btn btn-primary" onclick="track()">Track</button>
+            </form>
+        </div>
+
     </div>
 
     <script>
         //track calories func
         function track() {
-            //Example logic update w ur shit
-            const date = new Date();
+            // input the food into the database and add it to the logs.
 
-            let day = date.getDay();
-            let month = '0' + (date.getMonth() + 1);
-            let year = date.getFullYear();
-            let currentDate = `${year}-${month}-${day}`;
-
-            const caloriesInput = `SELECT total_cals FROM tracker WHERE username = $1 AND date = $2`, [username, currentDate];
-            const caloriesNeeded = `SELECT goal_calories FROM tracker WHERE username = $1`, [username];
-
-            //update w/ calculated values
-            document.getElementById('calories-input').textContent = caloriesInput;
-            document.getElementById('calories-needed').textContent = caloriesNeeded;
-            
         }
     </script>
 </body>
