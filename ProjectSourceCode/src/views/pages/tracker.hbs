@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Tracker</title>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -49,23 +44,17 @@
             background-color: #b3d2f3;
         }
     </style>
-</head>
-<body>
+
     <div class="container">
         <h1>{{username}}'s Tracking Page</h1>
         <div class="calories-info">
             <div>
-                <h2>Previous Week's Calories Met</h2>
-                <ul id="previous-calories">
-                    <!--Dynamically-->
-                    <li>Entry 1</li>
-                    <li>Entry 2</li>
-                    <li>Entry 3</li>
-                    <li>Entry 4</li>
-                    <li>Entry 5</li>
-                    <li>Entry 6</li>
-                    <li>Entry 7</li>
-                </ul>
+                <h2>Food Log</h2>
+                <table id="log-table">
+                    <tbody>
+                        
+                    </tbody>
+                </table>
             </div>
             <div>
                 <h2> Calories Information</h2>
@@ -76,7 +65,7 @@
         <hr>
         <div id="track-div">
             <h1 align="left">Track</h1>
-            <form>
+            <form action="/addMeal" method="POST">
                 <div class="mb-3 d-flex align-items-center">
                     <label for="meal-name" class="form-label" style="width: 120px;">Meal Name</label>
                     <input type="text" class="form-control flex-grow-1 me-2" style="max-width: 300px;" id="meal-name">
@@ -85,18 +74,8 @@
                     <label for="meal-calories" class="form-label" style="width: 120px;">Meal Calories</label>
                     <input type="text" class="form-control flex-grow-1" style="max-width: 300px;" id="meal-calories">
                 </div>
-                <button type="submit" class="btn btn-primary" onclick="track()">Track</button>
+                <button type="submit" class="btn btn-primary">Track</button>
             </form>
         </div>
 
     </div>
-
-    <script>
-        //track calories func
-        function track() {
-            // input the food into the database and add it to the logs.
-
-        }
-    </script>
-</body>
-</html>
