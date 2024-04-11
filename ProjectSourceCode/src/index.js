@@ -208,6 +208,7 @@ app.get('/tracker', auth, async (req, res) => {
       const user = await db.one('SELECT calorie_requirement FROM users WHERE username = $1', username);
 
       res.render('pages/tracker', {
+          username: req.session.user.username,
 
           calorie_requirement: user.calorie_requirement
       });
