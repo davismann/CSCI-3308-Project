@@ -6,19 +6,22 @@ CREATE TABLE IF NOT EXISTS users (
   age CHAR(3),
   activity_level VARCHAR(20),
   weight_goal VARCHAR(20),
-  calorie_requirement VARCHAR(10)
+  calorie_requirement INT,
+  daily_calorie_requirement INT
 );
 
 CREATE TABLE IF NOT EXISTS goals (
-  id NUMERIC PRIMARY KEY,
-  calories NUMERIC NOT NULL,
+  goal_id NUMERIC PRIMARY KEY,
+  calories INT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  user_id INT NOT NULL REFERENCES users(id)
+  username VARCHAR(50) NOT NULL REFERENCES users(username)
 );
 
 CREATE TABLE IF NOT EXISTS meals (
-  id NUMERIC PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
-  calories NUMERIC NOT NULL,
-  goal_id INT NOT NULL REFERENCES goals(id)
+  calories INT,
+  goal_id NUMERIC NOT NULL REFERENCES goals(goal_id),
+  username VARCHAR(50) NOT NULL REFERENCES users(username),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

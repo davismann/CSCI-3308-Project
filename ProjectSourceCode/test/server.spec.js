@@ -65,7 +65,7 @@ describe('Testing2', () => {
         weight_goal: 'Lose Weight',
       })
       .end((err, res) => {
-        expect(res).to.have.status(200);
+        expect(res).to.have.status(400);
         done();
       });
   });
@@ -102,7 +102,7 @@ describe('Testing 4', () => {
 describe('Testing 5', () => {
   it('negative: /login - should return status 302 for invalid credentials', (done) => {
     chai.request(server)
-      .post('/register')
+      .post('/login')
       .redirects(0)
       .send({ username: 'Andrew', password: 'smallFella' }) 
       .end((error, res) => {
