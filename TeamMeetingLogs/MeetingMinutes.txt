@@ -24,6 +24,14 @@ Agreed-on Roles:
   - Whenever you merge a pull request
 
 4/8/2024
+  Everyone went over what they did during the week.
+  - Davis - Added homepage hbs, adjusted navbar items, adjusted package.json, made login and register pages and made sure they work, lab 11
+  - Alex - Added tracker hbs and created shell for tracker, added SQL for tracker, made sure that homepage hbs loaded, Lab 11
+  - Eric - Worked on and still working on the implementation of the recipe API
+  - Andrew - Added goal tracker functionality
+  - Sam - Implemented calorie requirement equations and applied it
+
+4/15/2024
 
 
 
@@ -46,11 +54,11 @@ Made on 4/8/2024
   Davis - Work on test cases and make sure the recipes and tracker page or efficent.
   Alex - Work on adjusting the databases to allow for foreign keys between pages.
 
-Minutes For meeting 4/8/2024
-Everyone went over what they did during the week.
-Davis - Added homepage hbs, adjusted navbar items, adjusted package.json, made login and register pages and made sure they work, lab 11
-Alex - Added tracker hbs and created shell for tracker, added SQL for tracker, made sure that homepage hbs loaded, Lab 11
-Eric - Worked on and still working on the implementation of the recipe API
-Andrew - Added goal tracker functionality
-Sam - Implemented calorie requirement equations and applied it
 Made on 4/15/2024
+  Eric - Work on recipes page form, interface with recipes API, and recipes render call (CONTINUE)
+  Andrew - Work on the tracker page visualization along with connection to recipes page.
+  Idir - Making sure login and register criteria are accurate and creating boundaries.
+  Sam - Assist Idir and Andrew on their task.
+  Davis - Find errors throughout the entire current stance on the webpage.
+  Alex - Helping Eric make the correct route Gets and Posts for the recipes page.
+  
