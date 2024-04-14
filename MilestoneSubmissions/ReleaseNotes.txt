@@ -50,3 +50,23 @@ Initial setup for create SQL table
 
 
 **Full Changelog**: https://github.com/davismann/CSCI-3308-Project/compare/v1.0.0...v2.0.0
+
+
+
+4/15/2024
+## What's Changed
+* Update Release Notes. by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/64
+* continuing to interface with Edamam API. Created recipes hbs but lost… by @erfi9665 in https://github.com/davismann/CSCI-3308-Project/pull/66
+* revert gitignore and node_modules to correct form. by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/67
+* Completed the Testing. by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/68
+* Added UAT testing in pdf. by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/69
+* edited tracker table by @Stelzr in https://github.com/davismann/CSCI-3308-Project/pull/71
+* added tracker form and updated overall tracker page by @Andrewcook08 in https://github.com/davismann/CSCI-3308-Project/pull/72
+* added small tracker page change by @samengelbert12 in https://github.com/davismann/CSCI-3308-Project/pull/73
+* added post route to form, working on UI by @Andrewcook08 in https://github.com/davismann/CSCI-3308-Project/pull/75
+* text changes by @idirdah666 in https://github.com/davismann/CSCI-3308-Project/pull/79
+* Create.SQL Edit by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/80
+* Tracking page by @davismann in https://github.com/davismann/CSCI-3308-Project/pull/84
+
+
+**Full Changelog**: https://github.com/davismann/CSCI-3308-Project/compare/v2.0.0...v3.0.0
