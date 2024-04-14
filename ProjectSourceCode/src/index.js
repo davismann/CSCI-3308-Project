@@ -219,8 +219,6 @@ app.use(
 });
 
   app.get('/home', auth, (req, res) => {
-  console.log("requirment_saved");
-  console.log("gethome");
   res.render('pages/home', {
     username: req.session.user.username,
     height: req.session.user.height,
