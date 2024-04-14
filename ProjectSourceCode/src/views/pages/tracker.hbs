@@ -1,4 +1,9 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -30,6 +35,9 @@
             background-color: #f9f9f9;
             border-radius: 5px;
         }
+        .exceed-goal-text {
+            color: red;
+        }
         .button {
             padding: 10px 20px;
             font-size: 16px;
@@ -44,38 +52,70 @@
             background-color: #b3d2f3;
         }
     </style>
-
+</head>
+<body>
     <div class="container">
-        <h1>{{username}}'s Tracking Page</h1>
+        <h1>Tracking Page</h1>
         <div class="calories-info">
             <div>
                 <h2>Food Log</h2>
-                <table id="log-table">
+                <table>
                     <tbody>
-                        
+                        {{#each meals}}
+                        <tr>
+                            <td>{{this.name}}</td>
+                            <td>{{this.calories}}</td>
+                        </tr>
+                        {{/each}}
                     </tbody>
                 </table>
+                <button class="button" onclick="clearData()">Clear Data</button>
             </div>
-            <div>
-                <h2> Calories Information</h2>
-                <p>Calories today: <span id="calories-input">0</span></p>
-                <p>Goal calories: {{calorie_requirement}}</p>
-            </div>
+                <div>
+                    <h2>Calories Information</h2>
+                    <p>Calories today: {{totalCalories}}</p>
+                    <p>Goal calories: {{calorie_requirement}}</p>
+                    {{#if totalCaloriesExceedsGoal}}
+                        <p class="exceed-goal-text">You have exceeded your calorie goal for today!</p>
+                    {{/if}}
+                </div>
+
         </div>
         <hr>
         <div id="track-div">
             <h1 align="left">Track</h1>
             <form action="/addMeal" method="POST">
                 <div class="mb-3 d-flex align-items-center">
-                    <label for="meal-name" class="form-label" style="width: 120px;">Meal Name</label>
-                    <input type="text" class="form-control flex-grow-1 me-2" style="max-width: 300px;" id="meal-name">
+                    <label for="meal-name" class="form-label" style="width: 120px;">Meal/Food Name</label>
+                    <input type="text" class="form-control flex-grow-1 me-2" style="max-width: 300px;" id="meal-name" name="mealName">
                 </div>
                 <div class="mb-3 d-flex align-items-center">
                     <label for="meal-calories" class="form-label" style="width: 120px;">Meal Calories</label>
-                    <input type="text" class="form-control flex-grow-1" style="max-width: 300px;" id="meal-calories">
+                    <input type="text" class="form-control flex-grow-1" style="max-width: 300px;" id="meal-calories" name="mealCalories">
                 </div>
                 <button type="submit" class="btn btn-primary">Track</button>
             </form>
         </div>
-
     </div>
+
+    <script>
+    function clearData() {
+        try {
+            // Send a POST request to clear the log
+            fetch('/clearData', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    console.error('Failed');
+                }
+            })
+        } catch (error) {
+            console.error('Error clearing');
+        }
+    }
+    </script>
+</body>
+</html>
