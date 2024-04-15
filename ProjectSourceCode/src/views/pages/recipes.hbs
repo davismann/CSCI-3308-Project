@@ -114,14 +114,18 @@
             <div class="col-md-8">
                 <h3>{{this.label}}</h3>
                 <img src="{{this.image}}" alt="{{this.label}}" style="width: 100%; max-width: 300px;">
-                <p><a href="{{this.url}}" target="_blank">View Recipe</a></p>
+                <p>Calories: {{this.calories}} kcal</p>
+                <p>Protein: {{this.nutrients.PROCNT.quantity}} g</p>
+                <p>Fat: {{this.nutrients.FAT.quantity}} g</p>
+                <p>Carbs: {{this.nutrients.CHOCDF.quantity}} g</p>
+                <p><a href="{{this.url}}">View Recipe</a></p>
             </div>
         </div>
         {{/each}}
         {{else}}
         <div class="row justify-content-md-center">
             <div class="col">
-                No recipes found, or there was an error fetching recipes. Please try again later.
+                No recipes found.
             </div>
         </div>
         {{/if}}
