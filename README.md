@@ -1,3 +1,6 @@
+
+![Screen Shot 2024-04-15 at 4 53 05 PM 2](https://github.com/davismann/CSCI-3308-Project/assets/112287965/0aa62f3d-160b-4799-a22f-14ea0c415c80)
+
 # CalTracker+ ReadMe
 
 ## Brief Application Description
