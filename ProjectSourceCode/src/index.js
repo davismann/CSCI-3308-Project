@@ -279,7 +279,7 @@ app.post('/apply-filters', function (req, res) {
   res.json({ message: 'Filters applied', filters: RECIPE_FILTERS });
 });
 
-app.get('/recipes', async (req, res) => {
+app.get('/recipes', auth, async (req, res) => {
 
   const { nutrients, calories, q, mealType } = RECIPE_FILTERS;
 
