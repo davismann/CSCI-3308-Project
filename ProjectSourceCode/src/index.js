@@ -66,159 +66,118 @@ app.use(
   })
 );
 
-  app.get('/', (req, res) => {
-    res.redirect('/login');
-  });
-
-  app.get('/login', (req, res) => {
-    res.render('pages/login');
-  });
-
-  app.get('/register', (req, res) => {
-    res.render('pages/register');
-  });
-
-  app.post('/register', async (req, res) => {
-    try {
-      const { username, password, height, weight, activity_level, weight_goal, age, gender } = req.body;
-      
-      if (/^\d+$/.test(username)) {
-        return res.status(400).send('Invalid username. Usernames cannot consist only of numbers.');
-      }
-  
-      // Parse numeric fields from strings to numbers
-      const weightInKg = parseFloat(weight); 
-      const heightInCm = parseFloat(height); 
-      const ageYears = parseInt(age, 10);
-      
-      // BMR Calculation based on gender
-      const bmr = gender === 'male'
-        ? 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears + 5
-        : 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears - 161;
-       
-      // Adjust BMR based on activity level for TDEE calculation
-      const activityFactors = {
-        'Never': 1.2,
-        '1-2 times a week': 1.375,
-        '3-4 times a week': 1.55,
-        '5-7 times a week': 1.725
-      };
-      let tdee = bmr * (activityFactors[activity_level] || 1.2);
-      
-      // Adjust TDEE based on weight goal
-      if (weight_goal === 'Lose Weight') {
-        tdee -= 500;
-      } else if (weight_goal === 'Bulk') {
-        tdee += 500;
-      }
-      // No adjustment needed for 'Maintain'
-      
-      // Hash the password with bcrypt
-      const hashedPassword = await bcrypt.hash(password, 10);
-  
-      let calorie_requirement = Math.round(tdee);
-      
-      // Generate a new goal_id
-      const goal_id = Math.floor(Math.random() * 1000000); // You can use a more robust method for generating IDs
-      
-      // Insert the new user into the database with the calorie goal
-      const insertUserQuery = `
-        INSERT INTO users(username, password, height, weight, age, activity_level, weight_goal, calorie_requirement) 
-        VALUES($1, $2, $3, $4, $5, $6, $7, $8)
-        RETURNING username;
-      `;
-      const newUser = await db.one(insertUserQuery, 
-        [username, hashedPassword, heightInCm, weightInKg, ageYears, activity_level, weight_goal, calorie_requirement]
-      );
-  
-      const insertGoalQuery = `INSERT INTO goals(goal_id, calories, username) VALUES($1, $2, $3);`;
-      await db.none(insertGoalQuery, [goal_id, calorie_requirement, newUser.username]);
-        res.redirect('/login');
-
-    } catch (error) {
-      console.error('Error registering user:', error);
-      res.status(500).send('Error registering user. Please try again later.');
-    }
-  });
-  
-  app.post('/login', async (req, res) => {
-    try {
-      const { username, password } = req.body;
-  
-      if (/^\d+$/.test(username)) {
-        return res.status(400).send('Invalid username. Usernames cannot consist only of numbers.');
-      }
-        const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
-      // Check if user exists
-      if (user) {
-        const match = await bcrypt.compare(password, user.password);
-        
-        if (match) {
-          // Set the session user with the user's info
-          req.session.user = {
-            username: user.username,
-            height: user.height,
-            weight: user.weight,
-            age: user.age,
-            activity_level: user.activity_level,
-            weight_goal: user.weight_goal,
-            calorie_requirement: user.calorie_requirement
-          };
-          req.session.save(); // Save the session
-          res.redirect('/home');
-        } else {
-          res.status(400).render('pages/login', { error: 'Incorrect username or password.' });
-        }
-      } else {
-        res.redirect('/register');
-      }
-    } catch (error) {
-      console.error('Error logging in:', error);
-      res.status(400).render('pages/login', { error: 'An error occurred. Please try again later.' });
-    }
-  });
-  
-  app.post('/addMeal', auth, async (req, res) => {
-    try {
-      const { mealName, mealCalories } = req.body;
-      const username = req.session.user.username;
-  
-      const userGoalQuery = `SELECT goal_id FROM goals WHERE username = $1;`;
-      const { goal_id } = await db.one(userGoalQuery, [username]);
-  
-      // Insert the meal into meals tb
-      const insertMealQuery = `INSERT INTO meals(name, calories, goal_id, username) VALUES($1, $2, $3, $4)RETURNING *;`;
-      const insertedMeal = await db.one(insertMealQuery, [mealName, mealCalories, goal_id, username]);
-  
-      // Update total calories for day in the users tb
-      const updateCaloriesQuery = `UPDATE users SET daily_calorie_requirement = daily_calorie_requirement + $1 WHERE username = $2;`;
-      await db.none(updateCaloriesQuery, [mealCalories, username]);
-  
-      res.redirect('/tracker');
-    } catch (error) {
-      console.error('Error adding meal:', error);
-      res.status(500).send('Error adding meal. Please try again later.');
-    }
-  });
-  
-  app.post('/clearData', auth, async (req, res) => {
-    const username = req.session.user.username;
-    try {
-        const deleteQuery = `DELETE FROM meals WHERE username = $1 AND DATE(created_at) = CURRENT_DATE;`;
-        await db.none(deleteQuery, [username]);
-
-        // Set daily_calorie_requirement 0
-        const updateCaloriesQuery = `UPDATE users SET daily_calorie_requirement = 0 WHERE username = $1;`;
-        await db.none(updateCaloriesQuery, [username]);
-
-        res.redirect('/tracker');
-    } catch (error) {
-        console.error('Error clearing data:', error);
-        res.status(500).send('An error occurred while clearing the data.');
-    }
+app.get('/', (req, res) => {
+  res.redirect('/login');
+});
+app.get('/login', (req, res) => {
+  res.render('pages/login');
+});
+app.get('/register', (req, res) => {
+  res.render('pages/register');
 });
 
-  app.get('/home', auth, (req, res) => {
+app.post('/register', async (req, res) => {
+  try {
+    // Destructure the required fields from the request body
+    const { username, password, height, weight, activity_level, weight_goal, age, gender } = req.body;
+
+    // Parse numeric fields from strings to numbers
+    const weightInKg = parseFloat(weight);
+    const heightInCm = parseFloat(height);
+    const ageYears = parseInt(age, 10);
+
+    // BMR Calculation based on gender
+    const bmr = gender === 'male'
+      ? 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears + 5
+      : 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears - 161;
+
+    // Adjust BMR based on activity level for TDEE calculation
+    const activityFactors = {
+      'Never': 1.2,
+      '1-2 times a week': 1.375,
+      '3-4 times a week': 1.55,
+      '5-7 times a week': 1.725
+    };
+    let tdee = bmr * (activityFactors[activity_level] || 1.2);
+
+    // Adjust TDEE based on weight goal
+    if (weight_goal === 'Lose Weight') {
+      tdee -= 500;
+    } else if (weight_goal === 'Bulk') {
+      tdee += 500;
+    }
+    // No adjustment needed for 'Maintain'
+
+    // Hash the password with bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    let calorie_requirement = Math.round(tdee);
+
+    // Insert the new user into the database with the calorie goal
+    const insertUserQuery = `
+        INSERT INTO users(username, password, height, weight, age, activity_level, weight_goal, calorie_requirement) 
+        VALUES($1, $2, $3, $4, $5, $6, $7, $8);
+      `;
+    const insertUser = await db.result(insertUserQuery,
+      [username, hashedPassword, heightInCm, weightInKg, ageYears, activity_level, weight_goal, calorie_requirement]
+    );
+
+    // Check if the user was successfully inserted
+    if (insertUser.rowCount > 0) {
+      // Set the session user if needed and redirect to login
+      // ... (session logic here if applicable) ...
+      res.redirect('/login');
+    } else {
+      // If insertion failed, render the registration page again with an error message
+      res.render('pages/register', { error: 'Failed to register user.' });
+    }
+  } catch (error) {
+    // Log and send the error
+    console.error('Error registering user:', error);
+    res.status(500).send('Error registering user. Please try again later.');
+  }
+});
+
+
+app.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    // Find the user from the users table by username
+    const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
+    // Check if user exists
+    if (user) {
+      const match = await bcrypt.compare(password, user.password);
+
+      if (match) {
+        // If credentials match, set the session user with the user's information
+        req.session.user = {
+          username: user.username,
+          height: user.height,
+          weight: user.weight,
+          age: user.age,
+          activity_level: user.activity_level,
+          weight_goal: user.weight_goal,
+          calorie_requirement: user.calorie_requirement
+        };
+        req.session.save(); // Save the session
+        res.redirect('/home');
+
+      } else {
+        res.status(400).render('pages/login', { error: 'Incorrect username or password.' });
+      }
+    } else {
+      res.redirect('/register');
+    }
+  } catch (error) {
+    console.error('Error logging in:', error);
+    res.status(400).render('pages/login', { error: 'An error occurred. Please try again later.' });
+  }
+});
+
+
+app.get('/home', auth, (req, res) => {
+  console.log("gethome");
   res.render('pages/home', {
     username: req.session.user.username,
     height: req.session.user.height,
@@ -230,7 +189,7 @@ app.use(
   });
 });
 
-  app.get('/logout', auth, (req, res) => {
+app.get('/logout', auth, (req, res) => {
   req.session.destroy(err => {
     if (err) {
       console.error('Error destroying session:', err);
@@ -242,74 +201,90 @@ app.use(
   });
 });
 
-  app.get('/tracker', auth, async (req, res) => {
+app.get('/tracker', auth, async (req, res) => {
   const username = req.session.user.username;
+
   try {
-      const userCalorieQuery = `SELECT calorie_requirement, daily_calorie_requirement FROM users WHERE username = $1;`;
-      const { calorie_requirement, daily_calorie_requirement } = await db.one(userCalorieQuery, [username]);
+    const user = await db.one('SELECT calorie_requirement FROM users WHERE username = $1', username);
 
-      // Get the meals to put them into the log
-      const mealsQuery = `SELECT name, calories FROM meals WHERE username = $1AND DATE(created_at) = CURRENT_DATE;`;
-      const meals = await db.manyOrNone(mealsQuery, [username]);
+    res.render('pages/tracker', {
+      username: req.session.user.username,
 
-      // Get the sum of the calories from the meals because I cant seem to get the daily_calorie_requirement to work
-      const totalCaloriesQuery = `SELECT SUM(calories) AS total_calories FROM meals WHERE username = $1 AND DATE(created_at) = CURRENT_DATE;`;
-      const result = await db.one(totalCaloriesQuery, [username]);
-      const { total_calories } = result;
-
-      res.render('pages/tracker', {
-          username: username,
-          calorie_requirement: calorie_requirement,
-          daily_calorie_requirement: daily_calorie_requirement,
-          meals: meals || [],
-          totalCalories: total_calories || 0,
-          totalCaloriesExceedsGoal: total_calories > calorie_requirement,
-      });
+      calorie_requirement: user.calorie_requirement
+    });
   } catch (error) {
-      console.error('Error:', error);
-      res.status(500).send('An error while get logs.');
+    console.error('Error fetching calorie requirement:', error);
+
+    res.status(500).send('An error occurred while fetching the calorie requirement.');
   }
 });
 
-  app.get('/recipes', async (req, res) => {
-  // I'm assuming 'auth' is some middleware or a function call that you've defined elsewhere
+
+app.use(bodyParser.json());
+app.use(express.static(__dirname));
+let RECIPE_FILTERS = {};
+app.post('/apply-filters', function (req, res) {
+  RECIPE_FILTERS = req.body.filters;
+  res.json({ message: 'Filters applied', filters: RECIPE_FILTERS });
+});
+
+app.get('/recipes', async (req, res) => {
+
+  const { nutrients, calories, q, mealType } = RECIPE_FILTERS;
+
+  const params = {
+    app_key: process.env.API_KEY,
+    app_id: process.env.APP_ID,
+    type: "public"
+  };
+
+  if (q) params.q = q;
+  if (mealType) params.mealType = mealType;
+  if (calories) params.calories = calories;
+
+  if (nutrients) {
+    if (nutrients.PROCNT) params['nutrients[PROCNT]'] = nutrients.PROCNT;
+    if (nutrients.CHOCDF) params['nutrients[CHOCDF]'] = nutrients.CHOCDF;
+    if (nutrients.FAT) params['nutrients[FAT]'] = nutrients.FAT;
+  }
+
+
   try {
     const response = await axios({
       url: `https://api.edamam.com/api/recipes/v2`,
       method: 'GET',
       dataType: 'json',
       headers: {
-        'Accept': 'application/json', // Changed from 'Accept-Encoding' which is usually used for compression settings
+        'Accept': 'application/json',
       },
-      params: {
-        app_key: process.env.API_KEY,
-        app_id: process.env.APP_ID,
-        type: "public", // Assuming that you're trying to access public data
-        q: "chicken"
-      },
+      params: params
     });
 
 
     if (response.data && response.data.hits) {
       const recipes = response.data.hits.map(hit => {
-        const recipe = hit.recipe;
+        const { recipe } = hit;
         return {
           label: recipe.label,
           image: recipe.image,
           url: recipe.url,
-         
-          // ...any other data you need
+          ingredients: recipe.ingredientLines,
+          calories: recipe.calories,
+          cuisineType: recipe.cuisineType,
+          mealType: recipe.mealType,
+          dishType: recipe.dishType,
+          nutrients: recipe.totalNutrients,
         };
       });
-      res.render('pages/recipes', { recipes: recipes }); // Render 'recipes' page with the recipes data
+      res.render('pages/recipes', { recipes });
     } else {
-      res.render('pages/recipes', { recipes: [] }); // Render 'recipes' page with an empty array if no data
+      res.render('pages/recipes', { recipes: [], message: "No recipes found." });
     }
   } catch (error) {
     console.error("Error with Axios:", error);
     res.render('pages/recipes', {
       recipes: [],
-      message: "Failed to fetch recipes. Please try again later.",
+      message: "Failed to fetch recipes. Please try again later."
     });
   }
 });
@@ -317,8 +292,20 @@ app.use(
 //DUMMY APIS FOR TESTING//
 
 app.get('/welcome', (req, res) => {
-  res.json({status: 'success', message: 'Welcome!'});
+  res.json({ status: 'success', message: 'Welcome!' });
 });
+
+app.get('/dummy-positive-test', (req, res) => {
+  res.status(200).json({ result: 15 });
+});
+
+app.get('/dummy-negative-test', (req, res) => {
+  res.status(200).json({ result: 5 });
+});
+
+
+
+
 
 // *****************************************************
 // <!-- Section 5 : Start Server-->
