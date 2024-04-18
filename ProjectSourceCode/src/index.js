@@ -487,6 +487,68 @@ app.get('/recipes', auth, async (req, res) => {
   }
 });
 
+app.get('/edit', (req, res) => {
+  const errorMessage = req.query.error;
+  res.render('pages/edit', { errorMessage });
+});
+
+app.post('/edit', auth, async (req, res) => {
+  try {
+    const username = req.session.user.username;
+    const { height, weight, age, activity_level, weight_goal } = req.body;
+
+    // Parse numeric fields from strings to numbers
+    const weightInKg = parseFloat(weight);
+    const heightInCm = parseFloat(height);
+    const ageYears = parseInt(age, 10);
+
+    // BMR Calculation based on user's gender fetched from session
+    const gender = req.session.user.gender;
+    const bmr = gender === 'male'
+      ? 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears + 5
+      : 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears - 161;
+
+    // Adjust BMR based on activity level for TDEE calculation
+    const activityFactors = {
+      'Never': 1.2,
+      '1-2 times a week': 1.375,
+      '3-4 times a week': 1.55,
+      '5-7 times a week': 1.725
+    };
+    let tdee = bmr * (activityFactors[activity_level] || 1.2);
+
+    // Adjust TDEE based on weight goal
+    if (weight_goal === 'Lose Weight') {
+      tdee -= 500;
+    } else if (weight_goal === 'Bulk') {
+      tdee += 500;
+    }
+
+    let calorie_requirement = Math.round(tdee);
+
+    // Update user data in the database
+    const updateUserQuery = `
+      UPDATE users SET height = $1, weight = $2, age = $3, activity_level = $4, weight_goal = $5, calorie_requirement = $6 
+      WHERE username = $7;
+    `;
+    await db.none(updateUserQuery, [heightInCm, weightInKg, ageYears, activity_level, weight_goal, calorie_requirement, username]);
+
+    // Update session data
+    req.session.user.height = heightInCm;
+    req.session.user.weight = weightInKg;
+    req.session.user.age = ageYears;
+    req.session.user.activity_level = activity_level;
+    req.session.user.weight_goal = weight_goal;
+    req.session.user.calorie_requirement = calorie_requirement;
+    req.session.save(() => res.redirect('/home'));
+
+  } catch (error) {
+    console.error('Error updating user data:', error);
+    res.status(500).send('Error updating user data. Please try again later.');
+  }
+});
+
+
 //DUMMY APIS FOR TESTING//
 
 app.get('/welcome', (req, res) => {
