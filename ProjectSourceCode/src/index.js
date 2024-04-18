@@ -71,25 +71,41 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.render('pages/login');
+  const errorMessage = req.query.error;
+  res.render('pages/login', { errorMessage });
 });
 
 app.get('/register', (req, res) => {
-  res.render('pages/register');
+  const errorMessage = req.query.error;
+  res.render('pages/register', { errorMessage });
 });
 
 app.post('/register', async (req, res) => {
   try {
     const { username, password, height, weight, activity_level, weight_goal, age, gender } = req.body;
 
-    if (/^\d+$/.test(username)) {
-      return res.status(400).send('Invalid username. Usernames cannot consist only of numbers.');
-    }
+if (/^\d+$/.test(username)) {
+  const message = { error: 'Invalid username. Usernames cannot consist only of numbers.' };
+  return res.status(400).render('pages/register', { message });
+}
+const ageYears = parseInt(age, 10);
+const weightInKg = parseFloat(weight);
+const heightInCm = parseFloat(height);
 
-    // Parse numeric fields from strings to numbers
-    const weightInKg = parseFloat(weight);
-    const heightInCm = parseFloat(height);
-    const ageYears = parseInt(age, 10);
+if (isNaN(ageYears) || ageYears < 10 || ageYears > 100) {
+  const message = { error: 'Invalid age. Age must be a number between 10 and 100.' };
+  return res.status(400).render('pages/register', { message });
+}
+
+if (isNaN(weightInKg) || weightInKg <= 0 || weightInKg > 266) {
+  const message = { error: 'Invalid weight. Weight must be a positive number less than or equal to 266 kg.' };
+  return res.status(400).render('pages/register', { message });
+}
+
+if (isNaN(heightInCm) || heightInCm <= 0 || heightInCm > 243) {
+  const message = { error: 'Invalid height. Height must be a positive number less than or equal to 243 cm.' };
+  return res.status(400).render('pages/register', { message });
+}
 
     // BMR Calculation based on gender
     const bmr = gender === 'male'
@@ -146,17 +162,15 @@ app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     if (/^\d+$/.test(username)) {
-      return res.status(400).send('Invalid username. Usernames cannot consist only of numbers.');
-    }
+      const message = { error: 'Invalid username, cannot consist of only numbers.' };
+      return res.status(400).render('pages/login', { message });    }
+
     const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
 
-
-    // Check if user exists
     if (user) {
-      const match = await bcrypt.compare(password, user.password);
-
-      if (match) {
-        // Set the session user with the user's info
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      
+      if (passwordMatch) {
         req.session.user = {
           username: user.username,
           height: user.height,
@@ -167,18 +181,19 @@ app.post('/login', async (req, res) => {
           weight_goal: user.weight_goal,
           calorie_requirement: user.calorie_requirement
         };
-        req.session.save(); // Save the session
-  
-        res.redirect('/home');
+        req.session.save(); // Save session
+        
+        res.redirect('/home'); // Redirect to home page after successful login
       } else {
-        res.status(400).render('pages/login', { error: 'Incorrect username or password.' });
-      }
+        const message = { error: 'Incorrect password.' };
+        return res.status(400).render('pages/login', { message });      }
     } else {
-      res.redirect('/register');
-    }
+      const message = { error: 'Username not found.' };
+      return res.status(400).render('pages/login', { message });    }
+
   } catch (error) {
-    console.error('Error logging in:', error);
-    res.status(400).render('pages/login', { error: 'An error occurred. Please try again later.' });
+    console.error('Error logging in user:', error);
+    res.status(500).send('Error logging in user. Please try again later.');
   }
 });
 
