@@ -32,6 +32,12 @@ Agreed-on Roles:
   - Sam - Implemented calorie requirement equations and applied it
 
 4/15/2024
+    Everyone went over what they did during the week.
+  - Davis - Will do massive re-run of the entire code.
+  - Alex - Will so re-runs on small parts and help Eric with API.
+  - Eric - Recipes page is coming along and got good feedback on the modal from TA Cory Paik.
+  - Andrew - Will edit the recipes page visual.
+  - Sam - Understood role in coming week by assisting Idir. Meeting between them after.
 
 
 

@@ -32,7 +32,15 @@ const dbConfig = {
   password: process.env.POSTGRES_PASSWORD, // the password of the user account
 };
 
-const db = pgp(dbConfig);
+const proddbConfig = {
+  host: process.env.host, // the database server
+  port: 5432, // the database port
+  database: process.env.POSTGRES_DB, // the database name
+  user: process.env.POSTGRES_USER, // the user account to connect with
+  password: process.env.POSTGRES_PASSWORD, // the password of the user account
+};
+
+const db = pgp(proddbConfig);
 
 // test your database
 db.connect()
@@ -280,7 +288,7 @@ app.post('/apply-filters', function (req, res) {
   res.json({ message: 'Filters applied', filters: RECIPE_FILTERS });
 });
 
-app.get('/recipes', async (req, res) => {
+app.get('/recipes', auth, async (req, res) => {
 
   const { nutrients, calories, q, mealType } = RECIPE_FILTERS;
 

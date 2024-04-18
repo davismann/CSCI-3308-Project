@@ -1,4 +1,5 @@
-# CalTracker+ ReadMe
+
+![Screen Shot 2024-04-15 at 4 53 05 PM 2](https://github.com/davismann/CSCI-3308-Project/assets/112287965/0aa62f3d-160b-4799-a22f-14ea0c415c80)
 
 ## Brief Application Description
 This project is an application that provides you with a calorie goal of obtaining by having you enter information such as gender, current weight, goal weight, height, activity level, etc. In addition, the application will recommend specific meals that would help you obtain your desired goal.
@@ -32,3 +33,7 @@ To run this application locally, follow these steps:
 
 ## Running Tests
 To run tests for this application, execute the following command:
+1. `docker-compose up`.
+2. Next wait for mocha to display on the terminal.
+3. Wait till all 7 test cases pass.
+4. Once completed and all test cases have passede, continuation to hosting on `http://localhost:3000` will occur.
