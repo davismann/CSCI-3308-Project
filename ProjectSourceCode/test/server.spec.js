@@ -102,14 +102,14 @@ describe('Testing 4', () => {
 });
 
 describe('Testing 5', () => {
-  it('negative: /login - should return status 302 for invalid credentials', (done) => {
+  it('negative: /login - should return status 400 for invalid credentials', (done) => {
     chai.request(server)
       .post('/login')
       .redirects(0)
       .send({ username: 'Andrew', password: 'smallFella' }) 
       .end((error, res) => {
         expect(error).to.be.null;
-        expect(res).to.have.status(302);
+        expect(res).to.have.status(400);
         done();
       });
   });
