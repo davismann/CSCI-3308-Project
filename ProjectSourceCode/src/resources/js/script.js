@@ -1,16 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
     var modal = document.getElementById('myModal');
     var btn = document.getElementById('myBtn');
-    var span = document.getElementsByClassName('close')[0];
     var form = document.getElementById('recipeFiltersForm');
 
     btn.onclick = function () {
         modal.style.display = 'block';
     }
 
-    span.onclick = function () {
-        modal.style.display = 'none';
-    }
 
     window.onclick = function (event) {
         if (event.target == modal) {
@@ -24,10 +20,10 @@ document.addEventListener('DOMContentLoaded', function () {
         //calorie handling
         let cal;
         if (form.minCal.value && form.maxCal.value) {
-            cal = form.minCal.value + "-" + form.maxCal.value
+            cal = form.minCal.value + "-" + form.maxCal.value;
         }
         else if (form.minCal.value && !form.maxCal.value) {
-            cal = form.minCal.value + "%2B"
+            cal = form.minCal.value + "+"
         }
         else if (!form.minCal.value && form.maxCal.value) {
             cal = form.maxCal.value
@@ -48,12 +44,13 @@ document.addEventListener('DOMContentLoaded', function () {
             protein = undefined;
         }
 
+
         // Fat Handling
         let fat;
         if (form.minFat.value && form.maxFat.value) {
             fat = form.minFat.value + "-" + form.maxFat.value;
         } else if (form.minFat.value && !form.maxFat.value) {
-            fat = form.minFat.value + "+";
+            fat = form.minFat.value + "+";            
         } else if (!form.minFat.value && form.maxFat.value) {
             fat = form.maxFat.value;
         } else {
