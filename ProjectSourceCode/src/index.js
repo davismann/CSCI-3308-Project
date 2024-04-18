@@ -32,15 +32,7 @@ const dbConfig = {
   password: process.env.POSTGRES_PASSWORD, // the password of the user account
 };
 
-const proddbConfig = {
-  host: process.env.host, // the database server
-  port: 5432, // the database port
-  database: process.env.POSTGRES_DB, // the database name
-  user: process.env.POSTGRES_USER, // the user account to connect with
-  password: process.env.POSTGRES_PASSWORD, // the password of the user account
-};
-
-const db = pgp(proddbConfig);
+const db = pgp(dbConfig);
 
 // test your database
 db.connect()
@@ -131,12 +123,12 @@ app.post('/register', async (req, res) => {
 
     // Insert the new user into the database with the calorie goal
     const insertUserQuery = `
-        INSERT INTO users(username, password, height, weight, age, activity_level, weight_goal, calorie_requirement) 
-        VALUES($1, $2, $3, $4, $5, $6, $7, $8)
+        INSERT INTO users(username, password, height, weight, age, gender, activity_level, weight_goal, calorie_requirement) 
+        VALUES($1, $2, $3, $4, $5, $6, $7, $8 ,$9)
         RETURNING username;
       `;
     const newUser = await db.one(insertUserQuery,
-      [username, hashedPassword, heightInCm, weightInKg, ageYears, activity_level, weight_goal, calorie_requirement]
+      [username, hashedPassword, heightInCm, weightInKg, ageYears, gender, activity_level, weight_goal, calorie_requirement]
     );
 
     const insertGoalQuery = `INSERT INTO goals(goal_id, calories, username) VALUES($1, $2, $3);`;
@@ -157,6 +149,8 @@ app.post('/login', async (req, res) => {
       return res.status(400).send('Invalid username. Usernames cannot consist only of numbers.');
     }
     const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
+
+
     // Check if user exists
     if (user) {
       const match = await bcrypt.compare(password, user.password);
@@ -168,11 +162,13 @@ app.post('/login', async (req, res) => {
           height: user.height,
           weight: user.weight,
           age: user.age,
+          gender: user.gender,
           activity_level: user.activity_level,
           weight_goal: user.weight_goal,
           calorie_requirement: user.calorie_requirement
         };
         req.session.save(); // Save the session
+  
         res.redirect('/home');
       } else {
         res.status(400).render('pages/login', { error: 'Incorrect username or password.' });
@@ -232,6 +228,7 @@ app.get('/home', auth, (req, res) => {
     height: req.session.user.height,
     weight: req.session.user.weight,
     age: req.session.user.age,
+    gender: req.session.user.gender,
     activity_level: req.session.user.activity_level,
     weight_goal: req.session.user.weight_goal,
     calorie_requirement: req.session.user.calorie_requirement
