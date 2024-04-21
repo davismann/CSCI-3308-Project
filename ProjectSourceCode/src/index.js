@@ -501,6 +501,22 @@ app.post('/edit', auth, async (req, res) => {
     const weightInKg = parseFloat(weight);
     const heightInCm = parseFloat(height);
     const ageYears = parseInt(age, 10);
+  
+
+    if (isNaN(ageYears) || ageYears < 10 || ageYears > 100) {
+      const message = { error: 'Invalid age. Age must be a number between 10 and 100.' };
+      return res.status(400).render('pages/edit', { message });
+    }
+
+    if (isNaN(weightInKg) || weightInKg <= 0 || weightInKg > 266) {
+      const message = { error: 'Invalid weight. Weight must be a positive number less than or equal to 266 kg.' };
+      return res.status(400).render('pages/edit', { message });
+    }
+
+    if (isNaN(heightInCm) || heightInCm <= 0 || heightInCm > 243) {
+      const message = { error: 'Invalid height. Height must be a positive number less than or equal to 243 cm.' };
+      return res.status(400).render('pages/edit', { message });
+    }
 
     // BMR Calculation based on user's gender fetched from session
     const gender = req.session.user.gender;
