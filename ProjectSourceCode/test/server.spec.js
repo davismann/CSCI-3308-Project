@@ -40,7 +40,7 @@ describe('Testing1', () => {
         height: '175',
         weight: '70',
         age: '30',
-        gender: 'male',
+        gender: 'Male',
         activity_level: '3-4 times a week',
         weight_goal: 'Maintain',
       })
@@ -62,7 +62,7 @@ describe('Testing2', () => {
         height: '160',
         weight: '55',
         age: '25',
-        gender: 'female',
+        gender: 'Female',
         activity_level: '5-7 times a week',
         weight_goal: 'Lose Weight',
       })

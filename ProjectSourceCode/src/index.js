@@ -108,7 +108,7 @@ if (isNaN(heightInCm) || heightInCm <= 0 || heightInCm > 243) {
 }
 
     // BMR Calculation based on gender
-    const bmr = gender === 'male'
+    const bmr = gender === 'Male'
       ? 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears + 5
       : 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears - 161;
 
@@ -504,7 +504,7 @@ app.post('/edit', auth, async (req, res) => {
 
     // BMR Calculation based on user's gender fetched from session
     const gender = req.session.user.gender;
-    const bmr = gender === 'male'
+    const bmr = gender === 'Male'
       ? 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears + 5
       : 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears - 161;
 
