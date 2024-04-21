@@ -88,6 +88,13 @@ if (/^\d+$/.test(username)) {
   const message = { error: 'Invalid username. Usernames cannot consist only of numbers.' };
   return res.status(400).render('pages/register', { message });
 }
+const existingUserQuery = 'SELECT username FROM users WHERE username = $1';
+const existingUser = await db.oneOrNone(existingUserQuery, [username]);
+
+if (existingUser) {
+  const message = { error: 'Username already used. Please choose a different one.' };
+  return res.status(400).render('pages/register', { message });
+}
 const ageYears = parseInt(age, 10);
 const weightInKg = parseFloat(weight);
 const heightInCm = parseFloat(height);
