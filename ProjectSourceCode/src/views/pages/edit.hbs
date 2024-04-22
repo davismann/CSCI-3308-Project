@@ -11,23 +11,24 @@
 
             <label for="age" class="form-label">Age</label>
             <!-- Label for the age input -->
-            <input type="number" class="form-control" id="age" name="age" placeholder="Enter your age" required>
+            <input type="number" class="form-control" id="age" name="age" placeholder="{{age}}" required>
             <!-- Input field for age, marked as required -->
 
             <label for="height" class="form-label">Height (in cm)</label>
             <!-- Label for the height input -->
-            <input type="text" class="form-control" id="height" name="height" placeholder="Enter your height" required>
+            <input type="text" class="form-control" id="height" name="height" placeholder="{{height}}" required>
             <!-- Input field for height, marked as required -->
 
             <label for="weight" class="form-label">Weight (in kg)</label>
             <!-- Label for the weight input -->
-            <input type="text" class="form-control" id="weight" name="weight" placeholder="Enter your weight" required>
+            <input type="text" class="form-control" id="weight" name="weight" placeholder="{{weight}}" required>
             <!-- Input field for weight, marked as required -->
 
             <label for="activityLevel" class="form-label">How often are you active?</label>
             <!-- Label for the activity level input -->
             <select class="form-select" id="activityLevel" name="activity_level" required>
                 <!-- Dropdown for selecting activity level -->
+                <option value="" disabled selected>{{activity_level}}</option>
                 <option value="Never">Never</option>
                 <option value="1-2 times a week">1-2 times a week</option>
                 <option value="3-4 times a week">3-4 times a week</option>
@@ -38,6 +39,7 @@
             <!-- Label for the weight goal input -->
             <select class="form-select" id="weightGoal" name="weight_goal" required>
                 <!-- Dropdown for selecting weight goal -->
+                <option value="" disabled selected>{{weight_goal}}</option>
                 <option value="Lose Weight">Lose Weight</option>
                 <option value="Bulk">Bulk</option>
                 <option value="Maintain">Maintain</option>
