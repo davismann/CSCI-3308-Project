@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         };
 
-        fetch('/apply-filters', {
+        fetch('/recipes', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
