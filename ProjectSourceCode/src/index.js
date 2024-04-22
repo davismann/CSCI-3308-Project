@@ -497,6 +497,16 @@ app.get('/recipes', auth, async (req, res) => {
 app.get('/edit', (req, res) => {
   const errorMessage = req.query.error;
   res.render('pages/edit', { errorMessage });
+  res.render('pages/edit', {
+    username: req.session.user.username,
+    height: req.session.user.height,
+    weight: req.session.user.weight,
+    age: req.session.user.age,
+    gender: req.session.user.gender,
+    activity_level: req.session.user.activity_level,
+    weight_goal: req.session.user.weight_goal,
+    calorie_requirement: req.session.user.calorie_requirement
+  });
 });
 
 app.post('/edit', auth, async (req, res) => {
