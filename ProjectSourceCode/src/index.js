@@ -496,8 +496,8 @@ app.get('/recipes', auth, async (req, res) => {
 
 app.get('/edit', (req, res) => {
   const errorMessage = req.query.error;
-  res.render('pages/edit', { errorMessage });
-  res.render('pages/edit', {
+  res.render('pages/edit', { 
+    errorMessage,
     username: req.session.user.username,
     height: req.session.user.height,
     weight: req.session.user.weight,
