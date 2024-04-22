@@ -32,14 +32,6 @@ const dbConfig = {
   password: process.env.POSTGRES_PASSWORD, // the password of the user account
 };
 
-const proddbConfig = {
-  host: process.env.host, // the database server
-  port: 5432, // the database port
-  database: process.env.POSTGRES_DB, // the database name
-  user: process.env.POSTGRES_USER, // the user account to connect with
-  password: process.env.POSTGRES_PASSWORD, // the password of the user account
-};
-
 const db = pgp(dbConfig);
 
 // test your database
@@ -79,28 +71,51 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.render('pages/login');
+  const errorMessage = req.query.error;
+  res.render('pages/login', { errorMessage });
 });
 
 app.get('/register', (req, res) => {
-  res.render('pages/register');
+  const errorMessage = req.query.error;
+  res.render('pages/register', { errorMessage });
 });
 
 app.post('/register', async (req, res) => {
   try {
     const { username, password, height, weight, activity_level, weight_goal, age, gender } = req.body;
 
-    if (/^\d+$/.test(username)) {
-      return res.status(400).send('Invalid username. Usernames cannot consist only of numbers.');
-    }
+if (/^\d+$/.test(username)) {
+  const message = { error: 'Invalid username. Usernames cannot consist only of numbers.' };
+  return res.status(400).render('pages/register', { message });
+}
+const existingUserQuery = 'SELECT username FROM users WHERE username = $1';
+const existingUser = await db.oneOrNone(existingUserQuery, [username]);
 
-    // Parse numeric fields from strings to numbers
-    const weightInKg = parseFloat(weight);
-    const heightInCm = parseFloat(height);
-    const ageYears = parseInt(age, 10);
+if (existingUser) {
+  const message = { error: 'Username already used. Please choose a different one.' };
+  return res.status(400).render('pages/register', { message });
+}
+const ageYears = parseInt(age, 10);
+const weightInKg = parseFloat(weight);
+const heightInCm = parseFloat(height);
+
+if (isNaN(ageYears) || ageYears < 10 || ageYears > 100) {
+  const message = { error: 'Invalid age. Age must be a number between 10 and 100.' };
+  return res.status(400).render('pages/register', { message });
+}
+
+if (isNaN(weightInKg) || weightInKg <= 0 || weightInKg > 266) {
+  const message = { error: 'Invalid weight. Weight must be a positive number less than or equal to 266 kg.' };
+  return res.status(400).render('pages/register', { message });
+}
+
+if (isNaN(heightInCm) || heightInCm <= 0 || heightInCm > 243) {
+  const message = { error: 'Invalid height. Height must be a positive number less than or equal to 243 cm.' };
+  return res.status(400).render('pages/register', { message });
+}
 
     // BMR Calculation based on gender
-    const bmr = gender === 'male'
+    const bmr = gender === 'Male'
       ? 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears + 5
       : 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears - 161;
 
@@ -131,12 +146,12 @@ app.post('/register', async (req, res) => {
 
     // Insert the new user into the database with the calorie goal
     const insertUserQuery = `
-        INSERT INTO users(username, password, height, weight, age, activity_level, weight_goal, calorie_requirement) 
-        VALUES($1, $2, $3, $4, $5, $6, $7, $8)
+        INSERT INTO users(username, password, height, weight, age, gender, activity_level, weight_goal, calorie_requirement) 
+        VALUES($1, $2, $3, $4, $5, $6, $7, $8 ,$9)
         RETURNING username;
       `;
     const newUser = await db.one(insertUserQuery,
-      [username, hashedPassword, heightInCm, weightInKg, ageYears, activity_level, weight_goal, calorie_requirement]
+      [username, hashedPassword, heightInCm, weightInKg, ageYears, gender, activity_level, weight_goal, calorie_requirement]
     );
 
     const insertGoalQuery = `INSERT INTO goals(goal_id, calories, username) VALUES($1, $2, $3);`;
@@ -154,35 +169,38 @@ app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
     if (/^\d+$/.test(username)) {
-      return res.status(400).send('Invalid username. Usernames cannot consist only of numbers.');
-    }
-    const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
-    // Check if user exists
-    if (user) {
-      const match = await bcrypt.compare(password, user.password);
+      const message = { error: 'Invalid username, cannot consist of only numbers.' };
+      return res.status(400).render('pages/login', { message });    }
 
-      if (match) {
-        // Set the session user with the user's info
+    const user = await db.oneOrNone('SELECT * FROM users WHERE username = $1', [username]);
+
+    if (user) {
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      
+      if (passwordMatch) {
         req.session.user = {
           username: user.username,
           height: user.height,
           weight: user.weight,
           age: user.age,
+          gender: user.gender,
           activity_level: user.activity_level,
           weight_goal: user.weight_goal,
           calorie_requirement: user.calorie_requirement
         };
-        req.session.save(); // Save the session
-        res.redirect('/home');
+        req.session.save(); // Save session
+        
+        res.redirect('/home'); // Redirect to home page after successful login
       } else {
-        res.status(400).render('pages/login', { error: 'Incorrect username or password.' });
-      }
+        const message = { error: 'Incorrect password.' };
+        return res.status(400).render('pages/login', { message });      }
     } else {
-      res.redirect('/register');
-    }
+      const message = { error: 'Username not found.' };
+      return res.status(400).render('pages/login', { message });    }
+
   } catch (error) {
-    console.error('Error logging in:', error);
-    res.status(400).render('pages/login', { error: 'An error occurred. Please try again later.' });
+    console.error('Error logging in user:', error);
+    res.status(500).send('Error logging in user. Please try again later.');
   }
 });
 
@@ -232,6 +250,7 @@ app.get('/home', auth, (req, res) => {
     height: req.session.user.height,
     weight: req.session.user.weight,
     age: req.session.user.age,
+    gender: req.session.user.gender,
     activity_level: req.session.user.activity_level,
     weight_goal: req.session.user.weight_goal,
     calorie_requirement: req.session.user.calorie_requirement
@@ -474,6 +493,94 @@ app.get('/recipes', auth, async (req, res) => {
     });
   }
 });
+
+app.get('/edit', (req, res) => {
+  const errorMessage = req.query.error;
+  res.render('pages/edit', { 
+    errorMessage,
+    username: req.session.user.username,
+    height: req.session.user.height,
+    weight: req.session.user.weight,
+    age: req.session.user.age,
+    gender: req.session.user.gender,
+    activity_level: req.session.user.activity_level,
+    weight_goal: req.session.user.weight_goal,
+    calorie_requirement: req.session.user.calorie_requirement
+  });
+});
+
+app.post('/edit', auth, async (req, res) => {
+  try {
+    const username = req.session.user.username;
+    const { height, weight, age, activity_level, weight_goal } = req.body;
+
+    // Parse numeric fields from strings to numbers
+    const weightInKg = parseFloat(weight);
+    const heightInCm = parseFloat(height);
+    const ageYears = parseInt(age, 10);
+  
+
+    if (isNaN(ageYears) || ageYears < 10 || ageYears > 100) {
+      const message = { error: 'Invalid age. Age must be a number between 10 and 100.' };
+      return res.status(400).render('pages/edit', { message });
+    }
+
+    if (isNaN(weightInKg) || weightInKg <= 0 || weightInKg > 266) {
+      const message = { error: 'Invalid weight. Weight must be a positive number less than or equal to 266 kg.' };
+      return res.status(400).render('pages/edit', { message });
+    }
+
+    if (isNaN(heightInCm) || heightInCm <= 0 || heightInCm > 243) {
+      const message = { error: 'Invalid height. Height must be a positive number less than or equal to 243 cm.' };
+      return res.status(400).render('pages/edit', { message });
+    }
+
+    // BMR Calculation based on user's gender fetched from session
+    const gender = req.session.user.gender;
+    const bmr = gender === 'Male'
+      ? 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears + 5
+      : 10 * weightInKg + 6.25 * heightInCm - 5 * ageYears - 161;
+
+    // Adjust BMR based on activity level for TDEE calculation
+    const activityFactors = {
+      'Never': 1.2,
+      '1-2 times a week': 1.375,
+      '3-4 times a week': 1.55,
+      '5-7 times a week': 1.725
+    };
+    let tdee = bmr * (activityFactors[activity_level] || 1.2);
+
+    // Adjust TDEE based on weight goal
+    if (weight_goal === 'Lose Weight') {
+      tdee -= 500;
+    } else if (weight_goal === 'Bulk') {
+      tdee += 500;
+    }
+
+    let calorie_requirement = Math.round(tdee);
+
+    // Update user data in the database
+    const updateUserQuery = `
+      UPDATE users SET height = $1, weight = $2, age = $3, activity_level = $4, weight_goal = $5, calorie_requirement = $6 
+      WHERE username = $7;
+    `;
+    await db.none(updateUserQuery, [heightInCm, weightInKg, ageYears, activity_level, weight_goal, calorie_requirement, username]);
+
+    // Update session data
+    req.session.user.height = heightInCm;
+    req.session.user.weight = weightInKg;
+    req.session.user.age = ageYears;
+    req.session.user.activity_level = activity_level;
+    req.session.user.weight_goal = weight_goal;
+    req.session.user.calorie_requirement = calorie_requirement;
+    req.session.save(() => res.redirect('/home'));
+
+  } catch (error) {
+    console.error('Error updating user data:', error);
+    res.status(500).send('Error updating user data. Please try again later.');
+  }
+});
+
 
 //DUMMY APIS FOR TESTING//
 

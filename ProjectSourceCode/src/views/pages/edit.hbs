@@ -1,0 +1,52 @@
+<div class="container mt-5">
+    <!-- Container for the register form with a top margin -->
+    <h1>Edit</h1>
+    <!-- Register form heading -->
+    {{> message}}
+    <!-- Placeholder for displaying messages (e.g., errors, confirmations) -->
+    <form action="/edit" method="POST">
+        <!-- Form for user registration, submits to /register endpoint via POST -->
+        <div class="mb-3">
+            <!-- Grouping for form inputs with a bottom margin -->
+
+            <label for="age" class="form-label">Age</label>
+            <!-- Label for the age input -->
+            <input type="number" class="form-control" id="age" name="age" placeholder="{{age}}" required>
+            <!-- Input field for age, marked as required -->
+
+            <label for="height" class="form-label">Height (in cm)</label>
+            <!-- Label for the height input -->
+            <input type="text" class="form-control" id="height" name="height" placeholder="{{height}}" required>
+            <!-- Input field for height, marked as required -->
+
+            <label for="weight" class="form-label">Weight (in kg)</label>
+            <!-- Label for the weight input -->
+            <input type="text" class="form-control" id="weight" name="weight" placeholder="{{weight}}" required>
+            <!-- Input field for weight, marked as required -->
+
+            <label for="activityLevel" class="form-label">How often are you active?</label>
+            <!-- Label for the activity level input -->
+            <select class="form-select" id="activityLevel" name="activity_level" required>
+                <!-- Dropdown for selecting activity level -->
+                <option value="" disabled selected>{{activity_level}}</option>
+                <option value="Never">Never</option>
+                <option value="1-2 times a week">1-2 times a week</option>
+                <option value="3-4 times a week">3-4 times a week</option>
+                <option value="5-7 times a week">5-7 times a week</option>
+            </select>
+
+            <label for="weightGoal" class="form-label">Weight Goal</label>
+            <!-- Label for the weight goal input -->
+            <select class="form-select" id="weightGoal" name="weight_goal" required>
+                <!-- Dropdown for selecting weight goal -->
+                <option value="" disabled selected>{{weight_goal}}</option>
+                <option value="Lose Weight">Lose Weight</option>
+                <option value="Bulk">Bulk</option>
+                <option value="Maintain">Maintain</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <!-- Button to submit the form, styled with Bootstrap -->
+    </form>
+
+</div>
