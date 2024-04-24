@@ -302,25 +302,19 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname));
 let RECIPE_FILTERS = {};
 
-app.post('/recipes', function (req, res) {
-  RECIPE_FILTERS = req.body.filters;
-  res.json({ message: 'Filters applied', filters: RECIPE_FILTERS });
-});
 
-function hasFilters(filters) {
-  return Object.values(filters).some(value => {
-    if (typeof value === 'object' && value !== null) { 
-      return hasActiveFilters(value);
-    }
-    return value !== undefined && value !== '';
-  });
-}
+
+
+app.post('/recipes', function (req, res) {
+  req.session.RECIPE_FILTERS = req.body.filters;
+    res.json({ message: 'Filters applied', filters: req.body.filters });
+});
 
 app.get('/recipes', auth, async (req, res) => {
 
-  const { nutrients, calories, q, mealType } = RECIPE_FILTERS;
+  const { nutrients, calories, q, mealType } = req.session.RECIPE_FILTERS || {};
 
-  if (!hasFilters(RECIPE_FILTERS)) {
+  if (!req.session.RECIPE_FILTERS) {
     return res.render('pages/recipes', { recipes: [], message: "Search for recipes." });
   }
 
