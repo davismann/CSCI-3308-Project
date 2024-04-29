@@ -31,9 +31,15 @@ To run this application locally, follow these steps:
 4. Start the server using `docker-compose up`.
 5. Open your web browser and navigate to `http://localhost:3000`.
 
+## Instructions to Run through the Deployed Environment
+To run this application through the deployed environment, proceed to the following link:
+1. Proceed to the following link: "http://recitation-14-team-01.eastus.cloudapp.azure.com:3000".
+2. Upon going to the prior link, you will have full access to the user interface. 
+
 ## Running Tests
 To run tests for this application, execute the following command:
 1. `docker-compose up`.
 2. Next wait for mocha to display on the terminal.
 3. Wait till all 7 test cases pass.
 4. Once completed and all test cases have passed, continuation to hosting on `http://localhost:3000` will occur.
+
